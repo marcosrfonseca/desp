@@ -1,0 +1,13 @@
+#!/usr/bin/env python
+
+from django.contrib import admin
+from desp.financa.models import Categoria, Lancamento, Conta
+
+class LancamentoAdmin(admin.ModelAdmin):
+    list_display = ('categ','dt','hist','valor')
+    list_display_links = list_display
+    ordering = ('categ',)
+
+admin.site.register(Categoria)
+admin.site.register(Lancamento, LancamentoAdmin)
+admin.site.register(Conta)

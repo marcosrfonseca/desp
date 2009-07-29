@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/bsgi/!svn/ver/53/sandbox/desp/financa
+END
+admin.py
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/bsgi/!svn/ver/52/sandbox/desp/financa/admin.py
+END
+views.py
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/bsgi/!svn/ver/53/sandbox/desp/financa/views.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/bsgi/!svn/ver/15/sandbox/desp/financa/__init__.py
+END
+models.py
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/bsgi/!svn/ver/52/sandbox/desp/financa/models.py
+END

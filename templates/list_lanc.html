@@ -1,0 +1,30 @@
+{% extends "principal.html" %}
+
+{% block titulo %}Despesas - Página Principal {%endblock%}
+
+{% block corpo%}
+    <h1>
+        Sistema de Despesas
+    </h1>
+        <h2> Lista de mensagens dos usuários </h2>
+    {%if not lanctos%}
+    Não há lançamentos para esta conta. 
+    {%endif%}
+    
+    {%if lanctos%}
+        <table border=1>
+            {%for lanc in lanctos%}
+                <tr>
+					<td> {{ lanc.dt|date:"d/m/Y" }} </td>
+                    <td> {{lanc.hist}}</td>
+                    <td> {{lanc.categ}}</td>
+                    <td> {{lanc.valor}}</td>
+                    <td> {{lanc.saldo}}</td>
+                </tr>
+            {%endfor%}
+         </table>
+    {%endif%}
+    
+ip: {{ip}}
+{%endblock%}
+

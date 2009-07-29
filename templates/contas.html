@@ -1,0 +1,23 @@
+{% extends "principal.html" %}
+
+{% block titulo %}Despesas - Página Principal {%endblock%}
+
+{% block corpo%}
+
+    <h1>
+        Registro de Contas Bancárias
+    </h1>
+    <form action="." method = "post">
+    <table>
+        {{frmconta.as_table}} <!-- só com este comando ele mota a tabela -->
+        <tr>
+            <td></td>
+            <td><input type="submit" value="Enviar"></td>
+        </tr>
+    </table>
+ 
+    
+<!--ip: {{ip}} -->
+
+{%endblock%}
+

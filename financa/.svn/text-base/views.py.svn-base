@@ -1,0 +1,96 @@
+#coding: utf-8
+# Imporots do Django
+
+from django.http import HttpResponse, HttpResponseRedirect
+from django.template.loader import get_template
+from django.template import Context
+from django.shortcuts import render_to_response
+from django import forms
+#para enviar e-mail ... 
+from django.core.mail import send_mail
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.admin.widgets import AdminDateWidget
+
+# Import de bibliotecas python 
+#para tratar os erros eu preciso de uma biblioteca - posso dar um outro nome, pois o nome error e ruim para trabalhar
+from socket import error as SocketError
+from smtplib import SMTPSenderRefused
+
+from models import Lancamento, Categoria, Conta, PAGAMENTO, TIPO, BANCO
+
+import datetime
+
+
+class ContaForm(forms.Form):
+    nomeconta   = forms.CharField(required=False)
+    numconta    = forms.CharField(required=False)
+    nomebanco   = forms.ChoiceField(required=False, choices = [('','-----------')]+BANCO)
+    dtabertura  = forms.DateField(required=False, widget=AdminDateWidget())
+    sdinicial   = forms.CharField(required=False)
+    tipoconta   = forms.ChoiceField(required=False, choices = [('','-----------')]+TIPO)
+    
+    def __init__(self, *args, **kwargs):
+        super(ContaForm, self).__init__(*args,**kwargs)
+
+def contabanco(request):
+    if request.method == 'POST' :
+        frmconta = ContaForm(request.POST)
+        if frmconta.is_valid():
+            banco = Conta(
+                nome        = frmconta.cleaned_data['nomeconta'],
+                nconta      = frmconta.cleaned_data['numconta'],
+                banco       = frmconta.cleaned_data['nomebanco'],
+                dt_abertura = frmconta.cleaned_data['dtabertura'],
+                sd_inicial  = frmconta.cleaned_data['sdinicial'],
+                tp_conta    = frmconta.cleaned_data['tipoconta'],
+            )
+            banco.save()
+            return HttpResponseRedirect('/financ/contas/')
+    else:
+        frmconta = ContaForm()
+    return render_to_response('contas.html',{'frmconta':frmconta})
+
+      
+
+class DespForm(forms.Form):
+    dia     = forms.DateField(required=False,widget=AdminDateWidget())
+    hist    = forms.CharField(required=False)
+    categ   = forms.ChoiceField(required=False,choices = ())
+    pagto   = forms.ChoiceField(required=False, choices = [('','-----------')]+PAGAMENTO)
+    conta   = forms.ChoiceField(required=False,choices = ())
+    valor   = forms.CharField(required=False)
+    
+
+    def __init__(self, *args, **kwargs):
+        super(DespForm, self).__init__(*args,**kwargs)
+        self.fields['categ'].choices = [('','-----------')]+[(cat.id,cat.nome) for cat in Categoria.objects.all()]
+        self.fields['conta'].choices = [('','-----------')]+[(cta.id,cta.nome) for cta in Conta.objects.all()]
+
+def financ(request):
+    if request.method == 'POST' :
+        form = DespForm(request.POST)
+        if form.is_valid():
+            desp = Lancamento(
+                dt      = form.cleaned_data['dia'],
+                hist    = form.cleaned_data['hist'],
+                categ   = Categoria.objects.get(id=form.cleaned_data['categ']),
+                pagto   = form.cleaned_data['pagto'],
+                valor   = form.cleaned_data['valor'],
+            )
+            desp.save()
+            return HttpResponseRedirect('/financ/lanctos/')
+    else:
+        form = DespForm()
+        #return render_to_response('confirmacao.html')
+    return render_to_response('lancar.html',{'form':form})
+
+     
+def extrato(request):
+    lista = Lancamento.objects.order_by('dt')
+    saldo = 0
+    for lancto in lista:
+        saldo += lancto.valor
+        lancto.saldo = saldo
+    return render_to_response('list_lanc.html',{'lanctos':lista})
+    
+ 
